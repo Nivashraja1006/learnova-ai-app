@@ -4,6 +4,7 @@ import api from '../api/client';
 import { PageHeader } from '../components/ui/PageHeader';
 import { StatCard } from '../components/common/StatCard';
 import { MasteryBadge } from '../components/common/MasteryBadge';
+import { AnimatedNumber } from '../components/ui/AnimatedNumber';
 import {
   BarChart3,
   TrendingUp,
@@ -33,6 +34,10 @@ export const PerformancePage = () => {
   const [perfData, setPerfData] = useState(null);
   const [aiData, setAiData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const overall = perfData?.overall || {};
+  const subjectBreakdown = perfData?.subject_breakdown || [];
+  const topicList = perfData?.topic_performances || [];
+  const trends = aiData?.performance_trends || [];
 
   useEffect(() => {
     loadPerformanceMetrics();
@@ -64,11 +69,6 @@ export const PerformancePage = () => {
       </div>
     );
   }
-
-  const overall = perfData?.overall || {};
-  const subjectBreakdown = perfData?.subject_breakdown || [];
-  const topicList = perfData?.topic_performances || [];
-  const trends = aiData?.performance_trends || [];
 
   return (
     <div className="space-y-8 animate-fadeIn pb-12">
@@ -126,15 +126,17 @@ export const PerformancePage = () => {
           <div className="space-y-4">
             {subjectBreakdown.length > 0 ? (
               subjectBreakdown.map((s, idx) => (
-                <div key={idx} className="p-4 rounded-2xl bg-[#060911]/70 border border-white/5 space-y-2">
+                <div key={s.subject_id || s.subject_name || idx} className="p-4 rounded-2xl bg-[#060911]/70 border border-white/5 space-y-2">
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-bold text-white">{s.subject_name}</span>
-                    <span className="font-mono font-bold text-violet-300">{Math.round(s.average_score)}%</span>
+                    <span className="font-mono font-bold text-violet-300">
+                      <AnimatedNumber value={`${Math.round(s.average_score)}%`} />
+                    </span>
                   </div>
                   <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-white/5">
                     <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${s.average_score}%` }}
+                      initial={false}
+                      animate={{ width: `${Math.min(100, Math.max(0, s.average_score))}%` }}
                       transition={{ duration: 0.8 }}
                       className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full"
                     />
@@ -184,6 +186,8 @@ export const PerformancePage = () => {
                     strokeWidth={3}
                     dot={{ r: 4, fill: '#8b5cf6' }}
                     activeDot={{ r: 6, fill: '#c084fc' }}
+                    isAnimationActive={true}
+                    animationDuration={800}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -214,16 +218,18 @@ export const PerformancePage = () => {
             </thead>
             <tbody className="divide-y divide-white/5">
               {topicList.map((t, idx) => (
-                <tr key={idx} className="hover:bg-slate-900/40 transition">
+                <tr key={t.topic_id || idx} className="hover:bg-slate-900/40 transition">
                   <td className="py-3.5 font-bold text-white pr-4">{t.topic_name}</td>
                   <td className="py-3.5 text-slate-400 pr-4">{t.subject_name}</td>
                   <td className="py-3.5 pr-4">
                     <div className="flex items-center space-x-2">
-                      <span className="font-mono font-bold text-white w-9">{Math.round(t.score)}%</span>
+                      <span className="font-mono font-bold text-white w-12">
+                        <AnimatedNumber value={`${Math.round(t.score)}%`} />
+                      </span>
                       <div className="w-24 bg-slate-950 h-1.5 rounded-full overflow-hidden border border-white/5">
                         <div
-                          className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full"
-                          style={{ width: `${Math.min(100, t.score)}%` }}
+                          className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full transition-all duration-300"
+                          style={{ width: `${Math.min(100, Math.max(0, t.score))}%` }}
                         />
                       </div>
                     </div>

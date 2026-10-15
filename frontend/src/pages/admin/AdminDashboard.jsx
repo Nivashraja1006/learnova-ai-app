@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import api from '../../api/client';
@@ -51,6 +51,13 @@ export const AdminDashboard = () => {
     }
   };
 
+  const distributionData = useMemo(() => [
+    { name: 'Assessments', value: metrics?.total_assessments || 0, color: '#6366f1' },
+    { name: 'Quizzes', value: metrics?.total_quizzes || 0, color: '#8b5cf6' },
+    { name: 'Materials', value: metrics?.total_materials || 0, color: '#10b981' },
+    { name: 'Questions', value: metrics?.total_questions || 0, color: '#f59e0b' }
+  ], [metrics]);
+
   if (loading || !metrics) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
@@ -61,13 +68,6 @@ export const AdminDashboard = () => {
       </div>
     );
   }
-
-  const distributionData = [
-    { name: 'Assessments', value: metrics.total_assessments || 1, color: '#6366f1' },
-    { name: 'Quizzes', value: metrics.total_quizzes || 1, color: '#8b5cf6' },
-    { name: 'Materials', value: metrics.total_materials || 1, color: '#10b981' },
-    { name: 'Questions', value: metrics.total_questions || 1, color: '#f59e0b' }
-  ];
 
   return (
     <div className="space-y-8 animate-fadeIn pb-12">
@@ -152,7 +152,7 @@ export const AdminDashboard = () => {
                 <Tooltip
                   contentStyle={{ backgroundColor: '#0b0f19', borderColor: '#334155', borderRadius: '16px', fontSize: '12px' }}
                 />
-                <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                <Bar dataKey="value" radius={[8, 8, 0, 0]} isAnimationActive={true} animationDuration={800}>
                   {distributionData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}

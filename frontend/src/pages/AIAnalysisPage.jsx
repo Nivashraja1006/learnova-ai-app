@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import api from '../api/client';
 import { PageHeader } from '../components/ui/PageHeader';
 import { DifficultyBadge } from '../components/common/DifficultyBadge';
 import { MasteryBadge } from '../components/common/MasteryBadge';
+import { AnimatedNumber } from '../components/ui/AnimatedNumber';
 import {
   Brain,
   Sparkles,
@@ -51,6 +52,11 @@ export const AIAnalysisPage = () => {
     }
   };
 
+  const kl = data?.overall_knowledge_level || {};
+  const sw = data?.strengths_and_weaknesses || {};
+  const pace = data?.learning_pace || {};
+  const trends = useMemo(() => data?.performance_trends || [], [data?.performance_trends]);
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
@@ -61,11 +67,6 @@ export const AIAnalysisPage = () => {
       </div>
     );
   }
-
-  const kl = data?.overall_knowledge_level || {};
-  const sw = data?.strengths_and_weaknesses || {};
-  const pace = data?.learning_pace || {};
-  const trends = data?.performance_trends || [];
 
   return (
     <div className="space-y-8 animate-fadeIn pb-12">
@@ -106,7 +107,7 @@ export const AIAnalysisPage = () => {
                 {kl.level || 'Intermediate'}
               </span>
               <span className="px-3 py-1 rounded-full text-xs font-bold bg-violet-500/20 text-violet-300 border border-violet-500/35 font-mono">
-                {Math.round((kl.confidence_score || 0.85) * 100)}% Model Confidence
+                <AnimatedNumber value={`${Math.round((kl.confidence_score || 0.85) * 100)}%`} /> Model Confidence
               </span>
             </div>
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl font-normal">
@@ -153,7 +154,9 @@ export const AIAnalysisPage = () => {
                       <div className="text-[11px] text-slate-400 mt-0.5">{t.subject_name} • {t.attempts} attempts</div>
                     </div>
                     <div className="text-right">
-                      <div className="text-base font-bold text-emerald-400 font-mono">{Math.round(t.score)}%</div>
+                      <div className="text-base font-bold text-emerald-400 font-mono">
+                        <AnimatedNumber value={`${Math.round(t.score)}%`} />
+                      </div>
                       <MasteryBadge level={t.mastery_level} size="xs" />
                     </div>
                   </div>
@@ -190,7 +193,9 @@ export const AIAnalysisPage = () => {
                       <div className="text-[11px] text-slate-400 mt-0.5">{t.subject_name} • {t.attempts} attempts</div>
                     </div>
                     <div className="text-right flex items-center space-x-2">
-                      <span className="text-base font-bold text-rose-400 font-mono">{Math.round(t.score)}%</span>
+                      <span className="text-base font-bold text-rose-400 font-mono">
+                        <AnimatedNumber value={`${Math.round(t.score)}%`} />
+                      </span>
                       <Link
                         to={`/materials?topicId=${t.topic_id}`}
                         className="px-3 py-1 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 text-xs font-bold border border-rose-500/30 transition"
@@ -231,12 +236,16 @@ export const AIAnalysisPage = () => {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
           <div className="p-4 rounded-2xl bg-[#060911]/80 border border-white/5">
             <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Avg Latency Per Problem</div>
-            <div className="text-xl font-black text-white font-mono">{pace.average_seconds_per_question || 45}s</div>
+            <div className="text-xl font-black text-white font-mono">
+              <AnimatedNumber value={`${pace.average_seconds_per_question || 45}s`} />
+            </div>
             <div className="text-[10px] text-emerald-400 mt-1">Within optimal zone</div>
           </div>
           <div className="p-4 rounded-2xl bg-[#060911]/80 border border-white/5">
             <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Consistency Index</div>
-            <div className="text-xl font-black text-violet-400 font-mono">92.4%</div>
+            <div className="text-xl font-black text-violet-400 font-mono">
+              <AnimatedNumber value="92.4%" />
+            </div>
             <div className="text-[10px] text-slate-400 mt-1">Low performance variance</div>
           </div>
           <div className="p-4 rounded-2xl bg-[#060911]/80 border border-white/5">
@@ -284,6 +293,8 @@ export const AIAnalysisPage = () => {
                   strokeWidth={3}
                   dot={{ r: 4, fill: '#a855f7' }}
                   activeDot={{ r: 6, fill: '#c084fc' }}
+                  isAnimationActive={true}
+                  animationDuration={800}
                 />
               </LineChart>
             </ResponsiveContainer>

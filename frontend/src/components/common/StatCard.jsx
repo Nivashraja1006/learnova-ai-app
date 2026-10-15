@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { AnimatedCounter } from '../ui/AnimatedCounter';
+import { AnimatedNumber } from '../ui/AnimatedNumber';
 
 export const StatCard = ({ title, value, icon: Icon, subtitle, trend, color = 'indigo' }) => {
   const colorMap = {
@@ -66,7 +66,7 @@ export const StatCard = ({ title, value, icon: Icon, subtitle, trend, color = 'i
 
       <div className="flex items-baseline space-x-2.5">
         <div className="text-2xl sm:text-3xl font-black text-white tracking-tight font-mono">
-          <AnimatedCounter value={value} />
+          <AnimatedNumber value={value} />
         </div>
         {trend && (
           <span className="text-xs font-semibold text-emerald-400 flex items-center bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">

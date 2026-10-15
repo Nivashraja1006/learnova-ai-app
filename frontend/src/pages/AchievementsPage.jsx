@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import api from '../api/client';
 import confetti from 'canvas-confetti';
 import { PageHeader } from '../components/ui/PageHeader';
+import { AnimatedNumber } from '../components/ui/AnimatedNumber';
 import {
   Award,
   Trophy,
@@ -89,7 +90,7 @@ export const AchievementsPage = () => {
           <div className="px-4 py-2 rounded-2xl glass-panel border border-white/10 text-right">
             <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Unlocked Badges</div>
             <div className="text-lg font-black text-violet-400 font-mono">
-              {unlockedCount} / {achievements.length}
+              <AnimatedNumber value={`${unlockedCount} / ${achievements.length}`} />
             </div>
           </div>
         }

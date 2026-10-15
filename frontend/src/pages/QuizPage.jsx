@@ -13,8 +13,6 @@ import {
   ArrowRight,
   ArrowLeft,
   Sparkles,
-  RotateCcw,
-  BookOpen,
   Check,
   Zap
 } from 'lucide-react';

@@ -5,7 +5,7 @@ import api from '../api/client';
 import { PageHeader } from '../components/ui/PageHeader';
 import { DifficultyBadge } from '../components/common/DifficultyBadge';
 import { MasteryBadge } from '../components/common/MasteryBadge';
-import { AnimatedCounter } from '../components/ui/AnimatedCounter';
+import { AnimatedNumber } from '../components/ui/AnimatedNumber';
 import {
   Compass,
   CheckCircle2,
@@ -127,7 +127,7 @@ export const LearningPathPage = () => {
 
           <div className="text-left sm:text-right">
             <span className="text-3xl sm:text-4xl font-black text-violet-400 font-mono">
-              <AnimatedCounter value={`${Math.round(completionPct)}%`} />
+              <AnimatedNumber value={`${Math.round(completionPct)}%`} />
             </span>
             <div className="text-[11px] text-slate-400 mt-0.5">Syllabus Mastered</div>
           </div>
@@ -136,8 +136,8 @@ export const LearningPathPage = () => {
         {/* Global Progress Bar */}
         <div className="w-full bg-slate-950 h-3 rounded-full overflow-hidden border border-white/5">
           <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: `${completionPct}%` }}
+            initial={false}
+            animate={{ width: `${Math.min(100, Math.max(0, completionPct))}%` }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
             className="bg-gradient-to-r from-indigo-500 via-violet-500 to-purple-500 h-full"
           />
@@ -230,7 +230,9 @@ export const LearningPathPage = () => {
                 <div className="flex items-center space-x-4 pl-14 md:pl-0">
                   <div className="text-right hidden sm:block">
                     <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Mastery Score</div>
-                    <div className="text-base font-black text-white font-mono">{Math.round(step.mastery_score)}%</div>
+                    <div className="text-base font-black text-white font-mono">
+                      <AnimatedNumber value={`${Math.round(step.mastery_score)}%`} />
+                    </div>
                   </div>
 
                   {!isLocked ? (

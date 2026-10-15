@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useId, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { AnimatedNumber } from './AnimatedNumber';
+import { clampPercentage } from '../../utils/formatters';
 
 export const ProgressRing = ({
   percentage = 0,
@@ -9,14 +11,23 @@ export const ProgressRing = ({
   label,
   sublabel
 }) => {
+  const rawId = useId();
+  const gradientId = `ring-grad-${rawId.replace(/[^a-zA-Z0-9_-]/g, '')}`;
+  const isFirstMount = useRef(true);
+
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const clamped = Math.min(100, Math.max(0, percentage));
+  const clamped = clampPercentage(percentage);
   const strokeDashoffset = circumference - (clamped / 100) * circumference;
-  const gradientId = `ring-grad-${Math.random().toString(36).substring(2, 9)}`;
+
+  const initialOffset = isFirstMount.current ? circumference : false;
+  isFirstMount.current = false;
 
   return (
-    <div className="relative inline-flex items-center justify-center" style={{ width: size, height: size }}>
+    <div
+      className="relative inline-flex items-center justify-center"
+      style={{ width: size, height: size }}
+    >
       <svg width={size} height={size} className="transform -rotate-90">
         <defs>
           <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
@@ -47,9 +58,9 @@ export const ProgressRing = ({
           stroke={`url(#${gradientId})`}
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
-          initial={{ strokeDashoffset: circumference }}
+          initial={initialOffset !== false ? { strokeDashoffset: initialOffset } : false}
           animate={{ strokeDashoffset }}
-          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
           strokeLinecap="round"
           fill="transparent"
           filter={`url(#glow-${gradientId})`}
@@ -57,9 +68,13 @@ export const ProgressRing = ({
       </svg>
 
       {/* Center content */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-        <span className="text-xl sm:text-2xl font-black text-white tracking-tight">
-          {label !== undefined ? label : `${Math.round(clamped)}%`}
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-center select-none pointer-events-none">
+        <span className="text-xl sm:text-2xl font-black text-white tracking-tight tabular-nums font-mono">
+          {label !== undefined ? (
+            label
+          ) : (
+            <AnimatedNumber value={`${Math.round(clamped)}%`} duration={900} />
+          )}
         </span>
         {sublabel && (
           <span className="text-[10px] text-slate-400 font-medium tracking-wide uppercase mt-0.5">

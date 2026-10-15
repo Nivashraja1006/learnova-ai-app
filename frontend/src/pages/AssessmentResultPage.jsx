@@ -5,6 +5,7 @@ import api from '../api/client';
 import confetti from 'canvas-confetti';
 import { MasteryBadge } from '../components/common/MasteryBadge';
 import { ProgressRing } from '../components/ui/ProgressRing';
+import { AnimatedNumber } from '../components/ui/AnimatedNumber';
 import {
   Award,
   CheckCircle2,
@@ -113,11 +114,15 @@ export const AssessmentResultPage = () => {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto mb-8">
           <div className="p-3.5 rounded-2xl bg-slate-900/80 border border-white/5">
             <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">Total Score</div>
-            <div className="text-lg font-black text-white font-mono">{result.score} / {result.total_questions}</div>
+            <div className="text-lg font-black text-white font-mono">
+              <AnimatedNumber value={`${result.score} / ${result.total_questions}`} />
+            </div>
           </div>
           <div className="p-3.5 rounded-2xl bg-slate-900/80 border border-white/5">
             <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">Accuracy</div>
-            <div className="text-lg font-black text-emerald-400 font-mono">{Math.round(result.percentage)}%</div>
+            <div className="text-lg font-black text-emerald-400 font-mono">
+              <AnimatedNumber value={`${Math.round(result.percentage)}%`} />
+            </div>
           </div>
           <div className="p-3.5 rounded-2xl bg-slate-900/80 border border-white/5">
             <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">Duration</div>

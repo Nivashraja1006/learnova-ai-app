@@ -6,6 +6,7 @@ import { AmbientBackground } from '../components/ui/AmbientBackground';
 
 export const StudentLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
     <AmbientBackground>
@@ -15,9 +16,18 @@ export const StudentLayout = () => {
       />
 
       <div className="flex flex-1">
-        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <Sidebar
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={() => setSidebarCollapsed((prev) => !prev)}
+        />
 
-        <main className="flex-1 lg:pl-64 min-w-0 flex flex-col">
+        <main
+          className={`flex-1 min-w-0 flex flex-col transition-all duration-300 ${
+            sidebarCollapsed ? 'lg:pl-20' : 'lg:pl-64'
+          }`}
+        >
           <div className="p-4 sm:p-6 lg:p-8 flex-1 max-w-7xl mx-auto w-full">
             <Outlet />
           </div>

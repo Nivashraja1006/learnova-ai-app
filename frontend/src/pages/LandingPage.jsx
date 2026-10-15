@@ -8,21 +8,17 @@ import {
   Target,
   ArrowRight,
   CheckCircle2,
-  BarChart3,
   BookOpen,
   Award,
   Zap,
   TrendingUp,
-  Shield,
   Layers,
   ChevronRight,
-  Code2,
   Activity,
-  Flame,
   Check,
   X
 } from 'lucide-react';
-import { AnimatedCounter } from '../components/ui/AnimatedCounter';
+import { AnimatedNumber, AnimatedCounter } from '../components/ui/AnimatedNumber';
 
 export const LandingPage = () => {
   const [activeTab, setActiveTab] = useState('weakness');
@@ -320,7 +316,7 @@ export const LandingPage = () => {
               <div className="text-left md:text-right">
                 <div className="text-xs text-slate-400 font-medium">Concept Proficiency</div>
                 <div className={`text-4xl font-black font-mono ${currentDemo.scoreColor}`}>
-                  {currentDemo.score}%
+                  <AnimatedNumber value={`${currentDemo.score}%`} />
                 </div>
               </div>
             </div>
@@ -329,13 +325,15 @@ export const LandingPage = () => {
               <div>
                 <div className="flex justify-between text-xs text-slate-400 mb-2">
                   <span>Benchmark Progress Indicator</span>
-                  <span className="font-mono text-white font-bold">{currentDemo.score}% / 100%</span>
+                  <span className="font-mono text-white font-bold">
+                    <AnimatedNumber value={`${currentDemo.score}%`} /> / 100%
+                  </span>
                 </div>
                 <div className="w-full bg-slate-950 h-3 rounded-full overflow-hidden border border-white/5">
                   <motion.div
-                    initial={{ width: 0 }}
+                    initial={false}
                     animate={{ width: `${currentDemo.score}%` }}
-                    transition={{ duration: 0.8, ease: 'easeOut' }}
+                    transition={{ duration: 0.6, ease: 'easeOut' }}
                     className={`h-full bg-gradient-to-r ${currentDemo.barColor}`}
                   />
                 </div>

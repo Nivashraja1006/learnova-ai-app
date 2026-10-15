@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/client';
 import { PageHeader } from '../components/ui/PageHeader';
+import { AnimatedNumber } from '../components/ui/AnimatedNumber';
 import {
   User,
   GraduationCap,
@@ -117,7 +118,7 @@ export const ProfilePage = () => {
           <div className="p-3 rounded-2xl bg-slate-950/80 border border-white/5">
             <div className="text-[10px] text-slate-400 uppercase font-bold">Focus Streak</div>
             <div className="text-sm font-black text-amber-400 font-mono">
-              {user?.profile?.streak_days || 1} Days
+              <AnimatedNumber value={`${user?.profile?.streak_days || 1} Days`} />
             </div>
           </div>
         </div>

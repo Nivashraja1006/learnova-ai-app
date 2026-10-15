@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
@@ -79,6 +79,25 @@ export const StudentDashboard = () => {
     }
   };
 
+  const overall = performance?.overall || {};
+  const primaryRec = recommendations[0] || null;
+  const targetGoal = learningPath?.target_goal || user?.profile?.learning_goal || "Master Core Concepts";
+
+  const topicChartData = useMemo(() => {
+    return (performance?.topic_performances || []).slice(0, 6).map(t => ({
+      name: t.topic_name.length > 14 ? t.topic_name.substring(0, 12) + '...' : t.topic_name,
+      score: Math.round(t.score),
+      full_name: t.topic_name
+    }));
+  }, [performance?.topic_performances]);
+
+  const trendData = useMemo(() => {
+    return (aiAnalysis?.performance_trends || []).map(p => ({
+      name: p.date,
+      score: Math.round(p.score)
+    }));
+  }, [aiAnalysis?.performance_trends]);
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
@@ -89,23 +108,6 @@ export const StudentDashboard = () => {
       </div>
     );
   }
-
-  const overall = performance?.overall || {};
-  const primaryRec = recommendations[0] || null;
-  const targetGoal = learningPath?.target_goal || user?.profile?.learning_goal || "Master Core Concepts";
-
-  // Prepare chart data from topic performances
-  const topicChartData = (performance?.topic_performances || []).slice(0, 6).map(t => ({
-    name: t.topic_name.length > 14 ? t.topic_name.substring(0, 12) + '...' : t.topic_name,
-    score: Math.round(t.score),
-    full_name: t.topic_name
-  }));
-
-  // Activity trend data from AI analysis
-  const trendData = (aiAnalysis?.performance_trends || []).map(p => ({
-    name: p.date,
-    score: Math.round(p.score)
-  }));
 
   return (
     <div className="space-y-8 animate-fadeIn">
@@ -326,7 +328,7 @@ export const StudentDashboard = () => {
                     contentStyle={{ backgroundColor: '#0b0f19', borderColor: '#334155', borderRadius: '16px', fontSize: '12px', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}
                     formatter={(val) => [`${val}%`, 'Proficiency']}
                   />
-                  <Bar dataKey="score" fill="url(#barGrad)" radius={[8, 8, 0, 0]} />
+                  <Bar dataKey="score" fill="url(#barGrad)" radius={[8, 8, 0, 0]} isAnimationActive={true} animationDuration={800} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
@@ -365,7 +367,7 @@ export const StudentDashboard = () => {
                     contentStyle={{ backgroundColor: '#0b0f19', borderColor: '#334155', borderRadius: '16px', fontSize: '12px', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}
                     formatter={(val) => [`${val}%`, 'Score']}
                   />
-                  <Area type="monotone" dataKey="score" stroke="#c084fc" strokeWidth={3} fillOpacity={1} fill="url(#scoreGrad)" />
+                  <Area type="monotone" dataKey="score" stroke="#c084fc" strokeWidth={3} fillOpacity={1} fill="url(#scoreGrad)" isAnimationActive={true} animationDuration={800} />
                 </AreaChart>
               </ResponsiveContainer>
             ) : (
@@ -395,7 +397,7 @@ export const StudentDashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {recommendations.slice(0, 3).map((rec, i) => (
             <div
-              key={i}
+              key={rec.id || rec.topic_id || i}
               className="p-5 rounded-2xl glass-panel bg-slate-950/60 border border-white/5 flex flex-col justify-between glass-card-hover"
             >
               <div>

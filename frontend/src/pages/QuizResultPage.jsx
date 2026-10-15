@@ -3,6 +3,7 @@ import { useLocation, useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { ProgressRing } from '../components/ui/ProgressRing';
+import { AnimatedNumber } from '../components/ui/AnimatedNumber';
 import {
   Award,
   CheckCircle2,
@@ -92,11 +93,15 @@ export const QuizResultPage = () => {
         <div className="grid grid-cols-3 gap-3 max-w-md mx-auto mb-8">
           <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/25">
             <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 mb-0.5">Correct</div>
-            <div className="text-lg font-black text-emerald-300 font-mono">{result.score}</div>
+            <div className="text-lg font-black text-emerald-300 font-mono">
+              <AnimatedNumber value={result.score} />
+            </div>
           </div>
           <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/25">
             <div className="text-[10px] font-bold uppercase tracking-wider text-rose-400 mb-0.5">Incorrect</div>
-            <div className="text-lg font-black text-rose-300 font-mono">{incorrectCount}</div>
+            <div className="text-lg font-black text-rose-300 font-mono">
+              <AnimatedNumber value={incorrectCount} />
+            </div>
           </div>
           <div className="p-3.5 rounded-2xl bg-slate-900 border border-white/5">
             <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">Duration</div>
